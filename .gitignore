@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+
+# Folders
+[Dd]ebug/
+**/.vs
+**/.vscode
+
+# Image Files
+**/*.ppm
