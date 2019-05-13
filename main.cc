@@ -7,7 +7,6 @@
 #include <time.h>
 
 #define srand48(x) srand((int)(x))
-#define drand48() ((double)rand()/RAND_MAX)
 
 #include "sphere.h"
 #include "hitableList.h"
@@ -58,16 +57,16 @@ int main()
 	{
 		output << "P3\n" << nX << " " << nY << "\n255\n";
 
-		hitable* list[4];
 
-		list[0] = new sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new lambertian(vec3(0.8f, 0.3f, 0.3f))); 
-		list[1] = new sphere(vec3(0.0f, -100.5f, -1.0f), 100.0f, new lambertian(vec3(0.8f, 0.8f, 0.0f)));
-		list[2] = new sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new metal(vec3(0.8f, 0.6f, 0.2f), 0.3f));
-		list[3] = new sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new metal(vec3(0.8f, 0.8f, 0.8f), 1.0f));
+		camera cam(90.0f, float(nX) / float(nY));
+		float R = cos(M_PI / 4.0f);
 
-		hitable * world = new hitableList(list, 4);
+		hitable * list[2];
 
-		camera cam;
+		list[0] = new sphere(vec3(-R, 0.0f, -1.0f), R, new lambertian(vec3(0.0f, 0.0f, 1.0f)));
+		list[1] = new sphere(vec3(R, 0.0f, -1.0f), R, new lambertian(vec3(1.0f, 0.0f, 0.0f)));
+
+		hitable * world = new hitableList(list, 2);
 
 		for (int j = nY - 1; j >= 0; j--)
 		{
