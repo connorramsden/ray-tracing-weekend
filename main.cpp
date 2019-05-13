@@ -9,35 +9,30 @@
 #define srand48(x) srand((int)(x))
 #define drand48() ((double)rand()/RAND_MAX)
 
-#include "camera.h"
 #include "sphere.h"
 #include "hitableList.h"
 #include "float.h"
+#include "camera.h"
+#include "material.h"
 
 using namespace std;
 
-vec3 randomInUnitSphere()
-{
-	vec3 p;
-
-	do
-	{
-		p = 2.0f * vec3(drand48(), drand48(), drand48()) - vec3(1.0f, 1.0f, 1.0f);
-	} while (p.squaredLength() >= 1.0f);
-
-	return p;
-}
-
 // Hard-coded color-from-ray calculation
-vec3 color(const ray& r, hitable* world)
+vec3 color(const ray& r, hitable* world, int depth)
 {
 	hitRecord rec;
 
 	if (world->hit(r, 0.001f, FLT_MAX, rec))
 	{
-		vec3 target = rec.p + rec.normal + randomInUnitSphere();
+		ray scattered;
+		vec3 attenuation;
 
-		return 0.5f* color(ray(rec.p, target - rec.p), world);
+		if (depth < 50 && rec.matPtr->scatter(r, rec, attenuation, scattered))
+		{
+			return attenuation * color(scattered, world, depth + 1);
+		}
+		else
+			return vec3(0.0f, 0.0f, 0.0f);
 	}
 	else
 	{
@@ -63,12 +58,14 @@ int main()
 	{
 		output << "P3\n" << nX << " " << nY << "\n255\n";
 
-		hitable* list[2];
+		hitable* list[4];
 
-		list[0] = new sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f);
-		list[1] = new sphere(vec3(0.0f, -100.5f, -1.0f), 100.0f);
+		list[0] = new sphere(vec3(0.0f, 0.0f, -1.0f), 0.5f, new lambertian(vec3(0.8f, 0.3f, 0.3f))); 
+		list[1] = new sphere(vec3(0.0f, -100.5f, -1.0f), 100.0f, new lambertian(vec3(0.8f, 0.8f, 0.0f)));
+		list[2] = new sphere(vec3(1.0f, 0.0f, -1.0f), 0.5f, new metal(vec3(0.8f, 0.6f, 0.2f), 0.3f));
+		list[3] = new sphere(vec3(-1.0f, 0.0f, -1.0f), 0.5f, new metal(vec3(0.8f, 0.8f, 0.8f), 1.0f));
 
-		hitable * world = new hitableList(list, 2);
+		hitable * world = new hitableList(list, 4);
 
 		camera cam;
 
@@ -76,16 +73,16 @@ int main()
 		{
 			for (int i = 0; i < nX; i++)
 			{
-				vec3 col(0, 0, 0);
+				vec3 col(0.0f, 0.0f, 0.0f);
 
 				for (int s = 0; s < nS; s++)
 				{
-					float u = float(i + drand48()) / float(nX);
-					float v = float(j + drand48()) / float(nY);
+					float u = float(i + frand48()) / float(nX);
+					float v = float(j + frand48()) / float(nY);
 
 					ray r = cam.getRay(u, v);
 					vec3 p = r.pointAtParameter(2.0f);
-					col += color(r, world);
+					col += color(r, world, 0);
 				}
 
 				col /= float(nS);
