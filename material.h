@@ -6,8 +6,6 @@ struct hitRecord;
 #include "ray.h"
 #include "hitable.h"
 
-#define frand48() ((float)rand()/RAND_MAX)
-
 float schlick(float cosine, float refIdx)
 {
 	float rO = (1.0f - refIdx) / (1.0f + refIdx);

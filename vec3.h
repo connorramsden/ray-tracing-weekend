@@ -7,6 +7,9 @@
 using std::istream;
 using std::ostream;
 
+// Defining a float-random function here so that every class will inherit access
+#define frand48() ((float)rand()/RAND_MAX)
+
 // Simple Vector3 class
 class vec3
 {
