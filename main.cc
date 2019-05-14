@@ -41,10 +41,12 @@ vec3 color(const ray& r, hitable* world, int depth)
 	}
 }
 
-hitable* randomScene()
+hitable * randomScene()
 {
 	int n = 500;
+
 	hitable** list = new hitable * [n + 1];
+
 	list[0] = new sphere(vec3(0, -1000, 0), 1000, new lambertian(vec3(0.5f, 0.5f, 0.5f)));
 
 	int i = 1;
@@ -61,11 +63,13 @@ hitable* randomScene()
 			{
 				if (chooseMat < 0.8f)
 				{
-					list[i++] = new sphere(center, 0.2f, new lambertian(vec3(frand48() * frand48(), frand48() * frand48(), frand48() * frand48())));
+					list[i++] = new sphere(center, 0.2f,
+						new lambertian(vec3(frand48() * frand48(), frand48() * frand48(), frand48() * frand48())));
 				}
 				else if (chooseMat < 0.95f)
 				{
-					list[i++] = new sphere(center, 0.2f, new metal(vec3(0.5f * (1 + frand48()), 0.5f * (1 + frand48()), 0.5f * (1 + frand48())), 0.5f * frand48()));
+					list[i++] = new sphere(center, 0.2f, 
+						new metal(vec3(0.5f * (1 + frand48()), 0.5f * (1 + frand48()), 0.5f * (1 + frand48())), 0.5f * frand48()));
 				}
 				else
 				{
@@ -103,8 +107,10 @@ int main()
 		float distToFocus = (lookfrom - lookat).length();
 		float aperature = 2.0f;
 
-		camera cam(lookfrom, lookat, vec3(0,1,0), 20, float(nX)/float(nY), aperature, distToFocus);
+		camera cam(lookfrom, lookat, vec3(0, 1, 0), 20, float(nX) / float(nY), aperature, distToFocus);
 		float R = cos(M_PI / 4);
+
+		// Uncomment below to show some cool effcts
 
 		// hitable * list[5];
 		// 
@@ -116,7 +122,8 @@ int main()
 
 		// hitable * world = new hitableList(list, 5);
 
-		hitable* world = randomScene();
+		// If uncommenting above, comment this
+		hitable * world = randomScene();
 
 		for (int j = nY - 1; j >= 0; j--)
 		{
