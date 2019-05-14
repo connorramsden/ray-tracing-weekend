@@ -58,21 +58,24 @@ int main()
 		output << "P3\n" << nX << " " << nY << "\n255\n";
 
 
-		camera cam(90.0f, float(nX) / float(nY));
-		float R = cos(M_PI / 4.0f);
+		camera cam(vec3(-2, 2, 1), vec3(0, 0, -1), vec3(0, 1, 0), 30.0f, float(nY) / float(nY));
+		float R = cos(M_PI / 4);
 
-		hitable * list[2];
+		hitable * list[5];
 
-		list[0] = new sphere(vec3(-R, 0.0f, -1.0f), R, new lambertian(vec3(0.0f, 0.0f, 1.0f)));
-		list[1] = new sphere(vec3(R, 0.0f, -1.0f), R, new lambertian(vec3(1.0f, 0.0f, 0.0f)));
+		list[0] = new sphere(vec3(0, 0, -1), 0.5f, new lambertian(vec3(0.1f, 0.2f, 0.5f)));
+		list[1] = new sphere(vec3(0, -100.5f, -1), 100, new lambertian(vec3(0.8f, 0.8f, 0)));
+		list[2] = new sphere(vec3(1, 0, -1), 0.5f, new metal(vec3(0.8f, 0.6f, 0.2f)));
+		list[3] = new sphere(vec3(-1, 0, -1), 0.5f, new dielectric(1.5f));
+		list[4] = new sphere(vec3(-1, 0, -1), -0.45f, new dielectric(1.5f));
 
-		hitable * world = new hitableList(list, 2);
+		hitable * world = new hitableList(list, 5);
 
 		for (int j = nY - 1; j >= 0; j--)
 		{
 			for (int i = 0; i < nX; i++)
 			{
-				vec3 col(0.0f, 0.0f, 0.0f);
+				vec3 col(0, 0, 0);
 
 				for (int s = 0; s < nS; s++)
 				{
@@ -80,7 +83,7 @@ int main()
 					float v = float(j + frand48()) / float(nY);
 
 					ray r = cam.getRay(u, v);
-					vec3 p = r.pointAtParameter(2.0f);
+					vec3 p = r.pointAtParameter(2);
 					col += color(r, world, 0);
 				}
 
